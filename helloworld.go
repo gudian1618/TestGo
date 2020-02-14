@@ -18,7 +18,9 @@ func main() {
 	var num2 = "fads"
 	fmt.Println(num2)
 
-	// 简短类型
+	// 简短类型,:=只能定义不能改变赋值,
+	// 除非多变量中有为定义变量可修改其余赋值
+	// 简短定义方式不能定义全局变量
 	sum := 100
 	fmt.Println(sum)
 
@@ -31,6 +33,6 @@ func main() {
 		name = "sfas"
 		age  = 18
 	)
-	fmt.Println(name, age)
+	fmt.Println(name, age, &name)
 
 }
