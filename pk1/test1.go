@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func MyTest2() {
+func MyTest1() {
 	utils.Count()
 	timeutils.PringTime()
 }
