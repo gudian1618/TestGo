@@ -1,14 +1,10 @@
 package main
 
 import (
-	"TestGo/person"
-	"TestGo/pk1"
 	_ "TestGo/pk1"
-	"TestGo/utils"
-	"TestGo/utils/timeutils"
-	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"time"
 )
 
 func main() {
@@ -107,22 +103,37 @@ func main() {
 		导入顺序与调用初始化顺序相反,为栈结构
 		5._操作,表示导入包只执行初始化,不调用该包中任何函数
 	*/
-	utils.Count()
-	timeutils.PringTime()
 
-	pk1.MyTest1()
-	utils.MyTest2()
+	//utils.Count()
+	//timeutils.PringTime()
+	//
+	//pk1.MyTest1()
+	//utils.MyTest2()
+	//
+	//fmt.Println("-------------------")
+	//
+	//p1 := person.Person{"王二狗", 30, "男"}
+	//fmt.Println(p1.Name, p1.Age, p1.Sex)
+	//
+	//db, err := sql.Open("mysql", "root:test@tcp(127.0.0."+
+	//	"1:3306)/db20?charset=utf8")
+	//if err != nil {
+	//	fmt.Println("错误信息:", db)
+	//	return
+	//}
+	//fmt.Println("连接成功:", db)
 
-	fmt.Println("-------------------")
+	//pk2.MyTest3()
 
-	p1 := person.Person{"王二狗", 30, "男"}
-	fmt.Println(p1.Name, p1.Age, p1.Sex)
+	t1 := time.Now()
+	fmt.Println("%T\n", t1)
+	fmt.Println(t1)
 
-	db, err := sql.Open("mysql", "root:test@tcp(127.0.0."+
-		"1:3306)/db20?charset=utf8")
-	if err != nil {
-		fmt.Println("错误信息:", db)
-		return
-	}
-	fmt.Println("连接成功:", db)
+	time.Date(2020, 2, 15, 23, 23, 23, 23, time.Local)
+	s1 := t1.Format("2006年1月2日 15:04:05")
+	fmt.Println(s1)
+
+	s2 := t1.Format("2006/01/02")
+	fmt.Println(s2)
+
 }

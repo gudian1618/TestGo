@@ -11,5 +11,5 @@ func MyTest1() {
 	timeutils.PringTime()
 }
 func init() {
-	fmt.Println("utils包下的test文件中的初始化函数")
+	fmt.Println("pk1包下的init初始化函数")
 }
