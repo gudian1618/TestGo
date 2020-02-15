@@ -1,5 +1,5 @@
 package utils
 
-func MyTest2() {
+func MyTest1() {
 	Count()
 }
