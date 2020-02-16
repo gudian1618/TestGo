@@ -135,5 +135,37 @@ func main() {
 
 	s2 := t1.Format("2006/01/02")
 	fmt.Println(s2)
+	fmt.Printf("%T\n", t1)
 
+	year, month, day := t1.Date()
+	fmt.Println(year, month, day)
+
+	hour, min, sec := t1.Clock()
+	fmt.Println(hour, min, sec)
+
+	yearDay := t1.YearDay()
+	fmt.Println(yearDay)
+	fmt.Println(t1.Weekday(), t1.Day())
+
+	// 时间戳 距离UTC时的时间差
+	fmt.Println(t1.Unix(), t1.UnixNano())
+
+	// 时间间隔
+	fmt.Println(t1.Add(time.Minute))
+
+	// 睡眠延迟
+	time.Sleep(2 * time.Second)
+	fmt.Println("****")
+
+	go printNum()
+	for i := 1; i <= 50; i++ {
+		fmt.Printf("\t主程序打印字母: A %d\n")
+	}
+
+}
+
+func printNum() {
+	for i := 1; i <= 50; i++ {
+		fmt.Printf("子程序中打印数字%d\n", i)
+	}
 }
