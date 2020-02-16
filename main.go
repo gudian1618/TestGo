@@ -4,7 +4,9 @@ import (
 	_ "TestGo/pk1"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"math/rand"
 	"runtime"
+	"sync"
 	"time"
 )
 
@@ -155,14 +157,14 @@ func main() {
 	fmt.Println(t1.Add(time.Minute))
 
 	// 睡眠延迟
-	time.Sleep(1 * time.Second)
-	fmt.Println("****")
-
-	go printNum()
-	for i := 1; i <= 50; i++ {
-		fmt.Printf("\t主程序打印字母: A %d\n", i)
-	}
-	time.Sleep(time.Second)
+	//time.Sleep(1 * time.Second)
+	//fmt.Println("****")
+	//
+	//go printNum()
+	//for i := 1; i <= 50; i++ {
+	//	fmt.Printf("\t主程序打印字母: A %d\n", i)
+	//}
+	//time.Sleep(time.Second)
 
 	// 获取goroot目录
 	fmt.Println("goroot-->", runtime.GOROOT())
@@ -184,13 +186,162 @@ func main() {
 	//	fmt.Println("main...")
 	//}
 
-	go func() {
-		fmt.Println("goroutine开始...")
-		fun()
-		fmt.Println("goroutine结束...")
-	}()
-	time.Sleep(3 * time.Second)
+	//go func() {
+	//	fmt.Println("goroutine开始...")
+	//	fun()
+	//	fmt.Println("goroutine结束...")
+	//}()
+	//time.Sleep(3 * time.Second)
 
+	/*
+		4个模拟并发
+	*/
+
+	//wg.Add(4)
+	//
+	//go saleTickets("售票口1")
+	//go saleTickets("售票口2")
+	//go saleTickets("售票口3")
+	//go saleTickets("售票口4")
+	//
+	//wg.Wait()
+	//fmt.Println("main结束了")
+
+	//time.Sleep(7*time.Second)
+
+	//wg.Add(2)
+	//go fun1()
+	//go fun2()
+	//
+	//fmt.Println("main进入阻塞状态,等待wg中的goroutine结束")
+	//wg.Wait()
+	//fmt.Println("main结束")
+
+	//ruMutex = new(sync.RWMutex)
+	//wg1 = new(sync.WaitGroup)
+	//
+	//wg1.Add(4)
+	//// 多个读同时进行
+	//go readData(0)
+	//go writeData(1)
+	//go readData(2)
+	//go writeData(3)
+	//
+	//wg1.Wait()
+	//fmt.Println("main结束...")
+
+	/*
+		channel通道
+	*/
+
+	//var a chan int // 声明通道变量
+	//fmt.Printf("%T,%v\n", a, a)
+	//
+	//if a == nil {
+	//	fmt.Println("为空不能使用")
+	//	a = make(chan int)
+	//	fmt.Println(a)
+	//}
+	//test1(a)
+	//
+	//var ch1 chan bool
+	//ch1 = make(chan bool)
+	//
+	//go func() {
+	//	for i := 0; i < 10; i++ {
+	//		fmt.Println("子协程中,i:", i)
+	//	}
+	//	// 向通道内写数据,发送数据到通道
+	//	ch1 <- true
+	//	fmt.Println("结束...")
+	//}()
+	//// 通道向外发数据,向通道外读数据
+	//data := <- ch1
+	//fmt.Println("main...", data)
+	//fmt.Println("main结束...")
+
+	ch2 := make(chan int)
+
+	go func() {
+		fmt.Println("子程序开始执行...")
+		time.Sleep(2 * time.Second)
+		data := <-ch2
+		fmt.Println("data:", data)
+	}()
+	ch2 <- 10
+	fmt.Println("main.over..")
+
+}
+
+func test1(ch chan int) {
+	fmt.Printf("%T,%v\n", ch, ch)
+}
+
+var wg1 *sync.WaitGroup
+var ruMutex *sync.RWMutex
+
+func writeData(i int) {
+	defer wg1.Done()
+
+	fmt.Println(i, "开始写...")
+	ruMutex.Lock() // 写操作上锁
+	fmt.Println(i, "正在写...")
+	time.Sleep(2 * time.Second)
+	ruMutex.Unlock()
+	fmt.Println(i, "写结束...")
+
+}
+
+func readData(i int) {
+	defer wg1.Done()
+	fmt.Println(i, "开始读...")
+	ruMutex.RLock() // 读操作上锁
+	fmt.Println(i, "正在读取数据...")
+	time.Sleep(2 * time.Second)
+	ruMutex.RUnlock() // 读操作解锁
+	fmt.Println(i, "读结束...")
+}
+
+// 创建一把锁
+var mutex sync.Mutex
+
+var ticket = 10
+
+func saleTickets(name string) {
+	rand.Seed(time.Now().UnixNano())
+	defer wg.Done()
+	for {
+		// 上锁
+		mutex.Lock()    // g2
+		if ticket > 0 { // g1
+			time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond)
+			fmt.Println(name, "售出", ticket)
+			ticket--
+		} else {
+			mutex.Unlock() // 条件不满足也要解锁
+			fmt.Println(name, "售完,没有了...")
+			break
+		}
+		// 解锁
+		mutex.Unlock()
+	}
+}
+
+var wg sync.WaitGroup
+
+func fun1() {
+	for i := 1; i < 10; i++ {
+		fmt.Println("fun1中打印", i)
+	}
+	// 计数值减一
+	wg.Done()
+}
+
+func fun2() {
+	defer wg.Done()
+	for i := 1; i < 10; i++ {
+		fmt.Println("fun2中打印", i)
+	}
 }
 
 func fun() {
