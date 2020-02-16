@@ -260,17 +260,56 @@ func main() {
 	//fmt.Println("main...", data)
 	//fmt.Println("main结束...")
 
-	ch2 := make(chan int)
+	//ch2 := make(chan int)
+	//
+	//go func() {
+	//	fmt.Println("子程序开始执行...")
+	//	time.Sleep(2 * time.Second)
+	//	data := <-ch2
+	//	fmt.Println("data:", data)
+	//}()
+	//ch2 <- 10
+	//fmt.Println("main.over..")
 
-	go func() {
-		fmt.Println("子程序开始执行...")
-		time.Sleep(2 * time.Second)
-		data := <-ch2
-		fmt.Println("data:", data)
-	}()
-	ch2 <- 10
-	fmt.Println("main.over..")
+	// 死锁
+	//ch3 := make(chan int)
+	//ch3 <- 100 // 阻塞
 
+	/*
+		关闭通道
+		子goroutine和住goroutine的读写阻塞与接触阻塞
+	*/
+
+	//ch4 := make(chan int)
+	//go sendData(ch4)
+	//// 读取通道的数据
+	//for {
+	//	time.Sleep(1 * time.Second)
+	//	v, ok := <-ch4
+	//	if !ok {
+	//		fmt.Println("读取了所有的值..", ok)
+	//		break
+	//	}
+	//	fmt.Println("读取的数据:", v, ok)
+	//}
+	//fmt.Println("main...over...")
+
+	ch5 := make(chan int)
+	go sendData(ch5)
+	for v := range ch5 {
+		fmt.Println("读取数据:", v)
+	}
+	fmt.Println("main...over")
+
+}
+
+func sendData(ch4 chan int) {
+	// 发送方: 发送数据
+	for i := 0; i < 10; i++ {
+		time.Sleep(1 * time.Second)
+		ch4 <- i
+	}
+	close(ch4)
 }
 
 func test1(ch chan int) {
