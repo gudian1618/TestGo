@@ -294,12 +294,33 @@ func main() {
 	//}
 	//fmt.Println("main...over...")
 
-	ch5 := make(chan int)
-	go sendData(ch5)
-	for v := range ch5 {
-		fmt.Println("读取数据:", v)
-	}
-	fmt.Println("main...over")
+	//ch5 := make(chan int)
+	//go sendData(ch5)
+	//for v := range ch5 {
+	//	fmt.Println("读取数据:", v)
+	//}
+	//fmt.Println("main...over")
+
+	/*
+		非缓冲通道: make(chan T)
+			一次发送,一次接收,都是阻塞的
+		缓冲通道: make(chan T, capacity)
+			发送: 缓冲区的数据满了, 才会阻塞
+			接收: 缓冲区的数据空了, 才会阻塞
+	*/
+	ch6 := make(chan int)
+	fmt.Println(len(ch6), cap(ch6))
+	//ch6 <- 100 // 阻塞的
+
+	ch7 := make(chan int, 5)
+	fmt.Println(len(ch7), cap(ch7))
+	ch7 <- 100
+	fmt.Println(len(ch7), cap(ch7))
+	ch7 <- 200
+	ch7 <- 300
+	ch7 <- 400
+	ch7 <- 500
+	fmt.Println(len(ch7), cap(ch7))
 
 }
 
