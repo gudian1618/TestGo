@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"math/rand"
 	"runtime"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -321,7 +322,27 @@ func main() {
 	ch7 <- 400
 	ch7 <- 500
 	fmt.Println(len(ch7), cap(ch7))
+	fmt.Println("============")
+	ch8 := make(chan string, 4)
+	go sendData1(ch8)
+	for {
+		v, ok := <-ch8
+		if !ok {
+			fmt.Println("读完了...", ok)
+			break
+		}
+		fmt.Println("\t读取的数据是", v)
+	}
+	fmt.Println("main..over..")
 
+}
+
+func sendData1(ch chan string) {
+	for i := 0; i < 10; i++ {
+		ch <- "数据" + strconv.Itoa(i)
+		fmt.Printf("子goroutine中写出第%d个数据\n", i)
+	}
+	close(ch)
 }
 
 func sendData(ch4 chan int) {
