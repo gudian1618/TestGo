@@ -4,6 +4,7 @@ import (
 	_ "TestGo/pk1"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"runtime"
 	"time"
 )
 
@@ -154,13 +155,51 @@ func main() {
 	fmt.Println(t1.Add(time.Minute))
 
 	// 睡眠延迟
-	time.Sleep(2 * time.Second)
+	time.Sleep(1 * time.Second)
 	fmt.Println("****")
 
 	go printNum()
 	for i := 1; i <= 50; i++ {
-		fmt.Printf("\t主程序打印字母: A %d\n")
+		fmt.Printf("\t主程序打印字母: A %d\n", i)
 	}
+	time.Sleep(time.Second)
+
+	// 获取goroot目录
+	fmt.Println("goroot-->", runtime.GOROOT())
+	// 获取操作系统
+	fmt.Println("os/platform-->", runtime.GOOS)
+	// 获取逻辑cpu数量
+	fmt.Println("逻辑cpu的数量:", runtime.NumCPU())
+
+	// gosched
+	//go func() {
+	//	for i:=1; i<12; i++ {
+	//		fmt.Println("goroutine...")
+	//	}
+	//}()
+	//
+	//for i:=0; i<4; i++ {
+	//	// 让出时间片,先让别的goroutine执行
+	//	runtime.Gosched()
+	//	fmt.Println("main...")
+	//}
+
+	go func() {
+		fmt.Println("goroutine开始...")
+		fun()
+		fmt.Println("goroutine结束...")
+	}()
+	time.Sleep(3 * time.Second)
+
+}
+
+func fun() {
+	defer fmt.Println("defer...")
+	// 返回这次函数调用
+	//return
+	// 跳出这次go协程
+	runtime.Goexit()
+	fmt.Println("fun函数...")
 
 }
 
