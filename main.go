@@ -421,6 +421,16 @@ func main() {
 	f := v.Interface().(float64)
 	fmt.Println(f)
 
+	// 通过反射改值
+	pointer := reflect.ValueOf(&x)
+	newValue := pointer.Elem()
+
+	fmt.Println("类型:", newValue.Type())
+	fmt.Println("是否可以修改数据:", newValue.CanSet())
+
+	newValue.SetFloat(1.23)
+	fmt.Println(x)
+
 }
 
 func sendData2(ch chan string, done chan bool) {
