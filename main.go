@@ -309,32 +309,113 @@ func main() {
 			发送: 缓冲区的数据满了, 才会阻塞
 			接收: 缓冲区的数据空了, 才会阻塞
 	*/
-	ch6 := make(chan int)
-	fmt.Println(len(ch6), cap(ch6))
-	//ch6 <- 100 // 阻塞的
 
-	ch7 := make(chan int, 5)
-	fmt.Println(len(ch7), cap(ch7))
-	ch7 <- 100
-	fmt.Println(len(ch7), cap(ch7))
-	ch7 <- 200
-	ch7 <- 300
-	ch7 <- 400
-	ch7 <- 500
-	fmt.Println(len(ch7), cap(ch7))
-	fmt.Println("============")
-	ch8 := make(chan string, 4)
-	go sendData1(ch8)
-	for {
-		v, ok := <-ch8
-		if !ok {
-			fmt.Println("读完了...", ok)
-			break
+	//ch6 := make(chan int)
+	//fmt.Println(len(ch6), cap(ch6))
+	////ch6 <- 100 // 阻塞的
+	//
+	//ch7 := make(chan int, 5)
+	//fmt.Println(len(ch7), cap(ch7))
+	//ch7 <- 100
+	//fmt.Println(len(ch7), cap(ch7))
+	//ch7 <- 200
+	//ch7 <- 300
+	//ch7 <- 400
+	//ch7 <- 500
+	//fmt.Println(len(ch7), cap(ch7))
+	//fmt.Println("============")
+	//ch8 := make(chan string, 4)
+	//go sendData1(ch8)
+	//for {
+	//	v, ok := <-ch8
+	//	if !ok {
+	//		fmt.Println("读完了...", ok)
+	//		break
+	//	}
+	//	fmt.Println("\t读取的数据是", v)
+	//}
+	//fmt.Println("main..over..")
+
+	/*
+		双向通道:
+			chan T
+				cha <- data, 发送数据,写出
+				data <- chan, 获取数据,读取
+		单向通道:定向
+			chan <- T 只写
+			<- chan T,只读
+	*/
+
+	// 双向通道
+	//ch9 := make(chan string) // 双向既能读又能写
+	//done := make(chan bool)
+	//go sendData2(ch9, done)
+	//
+	//data := <- ch9 // 读取
+	//fmt.Println("子goroutine传来:", data)
+	//
+	//ch9 <- "我是main"
+	//<- done
+	//fmt.Println("main...over...")
+
+	// 创建一个计时器
+
+	//timer := time.NewTimer(2 * time.Second)
+	//fmt.Printf("%T\n", timer)
+	//fmt.Println(time.Now())
+	//
+	//ch10 := timer.C
+	//fmt.Println(<-ch10)
+	//
+	//timer2 := time.NewTimer(5 * time.Second)
+	//go func() {
+	//	<- timer2.C
+	//	fmt.Println("timer2结束了...开始...")
+	//}()
+	//time.Sleep(3*time.Second)
+	//flag := timer2.Stop()
+	//if flag {
+	//	fmt.Println("timer2停止了...")
+	//}
+
+	/*
+		select语句
+	*/
+
+	ch20 := make(chan int)
+	ch21 := make(chan int)
+
+	go func() {
+		time.Sleep(2 * time.Second)
+		ch20 <- 100
+	}()
+
+	go func() {
+		time.Sleep(2 * time.Second)
+		ch21 <- 200
+	}()
+
+	select {
+	case num1 := <-ch20:
+		fmt.Println("ch20中获取的数据...", num1)
+	case num2, ok := <-ch21:
+		if ok {
+			fmt.Println("ch21中读取数据...", num2)
+		} else {
+			fmt.Println("ch2连接已经关闭...")
 		}
-		fmt.Println("\t读取的数据是", v)
+		// you该语句只会执行下面的内容,因为阻塞
+		//default:
+		fmt.Println("main...over...")
 	}
-	fmt.Println("main..over..")
 
+}
+
+func sendData2(ch chan string, done chan bool) {
+	ch <- "我是xxx" // 发送
+	data := <-ch
+	fmt.Println("main goroutine传来:", data)
+	done <- true
 }
 
 func sendData1(ch chan string) {
