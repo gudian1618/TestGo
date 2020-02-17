@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"math/rand"
+	"reflect"
 	"runtime"
 	"strconv"
 	"sync"
@@ -382,32 +383,43 @@ func main() {
 		select语句
 	*/
 
-	ch20 := make(chan int)
-	ch21 := make(chan int)
+	//ch20 := make(chan int)
+	//ch21 := make(chan int)
+	//
+	//go func() {
+	//	time.Sleep(2 * time.Second)
+	//	ch20 <- 100
+	//}()
+	//
+	//go func() {
+	//	time.Sleep(2 * time.Second)
+	//	ch21 <- 200
+	//}()
+	//
+	//select {
+	//case num1 := <-ch20:
+	//	fmt.Println("ch20中获取的数据...", num1)
+	//case num2, ok := <-ch21:
+	//	if ok {
+	//		fmt.Println("ch21中读取数据...", num2)
+	//	} else {
+	//		fmt.Println("ch2连接已经关闭...")
+	//	}
+	//	// you该语句只会执行下面的内容,因为阻塞
+	//	//default:
+	//	fmt.Println("main...over...")
+	//}
 
-	go func() {
-		time.Sleep(2 * time.Second)
-		ch20 <- 100
-	}()
+	var x float64 = 3.14
+	fmt.Println("type:", reflect.TypeOf(x))
+	fmt.Println("type:", reflect.ValueOf(x))
 
-	go func() {
-		time.Sleep(2 * time.Second)
-		ch21 <- 200
-	}()
+	fmt.Println("=================")
+	v := reflect.ValueOf(x)
+	fmt.Println("kind of float64:", v.Kind() == reflect.Float64)
 
-	select {
-	case num1 := <-ch20:
-		fmt.Println("ch20中获取的数据...", num1)
-	case num2, ok := <-ch21:
-		if ok {
-			fmt.Println("ch21中读取数据...", num2)
-		} else {
-			fmt.Println("ch2连接已经关闭...")
-		}
-		// you该语句只会执行下面的内容,因为阻塞
-		//default:
-		fmt.Println("main...over...")
-	}
+	f := v.Interface().(float64)
+	fmt.Println(f)
 
 }
 
